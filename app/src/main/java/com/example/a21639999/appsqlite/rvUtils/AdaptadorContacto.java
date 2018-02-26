@@ -15,8 +15,9 @@ import java.util.ArrayList;
  * Created by 21639999 on 12/02/2018.
  */
 
-public class AdaptadorContacto extends RecyclerView.Adapter <AdaptadorContacto.VHContacto> {
+public class AdaptadorContacto extends RecyclerView.Adapter <AdaptadorContacto.VHContacto> implements View.OnClickListener{
     private ArrayList<Contacto> datos;
+    private View.OnClickListener listener;
 
     public AdaptadorContacto(ArrayList<Contacto> datos){
         this.datos = datos;
@@ -27,6 +28,7 @@ public class AdaptadorContacto extends RecyclerView.Adapter <AdaptadorContacto.V
         View v = LayoutInflater.from(parent.getContext())
                 .inflate(R.layout.item_contacto, parent, false);
         VHContacto vhc = new VHContacto(v);
+        v.setOnClickListener(this);
         return vhc;
     }
 
@@ -39,6 +41,17 @@ public class AdaptadorContacto extends RecyclerView.Adapter <AdaptadorContacto.V
     @Override
     public int getItemCount() {
         return datos.size();
+    }
+
+    public void setOnclickListener(View.OnClickListener listener) {
+        this.listener = listener;
+    }
+
+    @Override
+    public void onClick(View v) {
+        if(listener != null){
+            listener.onClick(v);
+        }
     }
 
     public static class VHContacto extends  RecyclerView.ViewHolder{

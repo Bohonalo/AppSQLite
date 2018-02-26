@@ -26,6 +26,14 @@ public class Contacto implements Serializable {
         return id;
     }
 
+    public void setNombre(String nombre) {
+        this.nombre = nombre;
+    }
+
+    public void setEmail(String email) {
+        this.email = email;
+    }
+
     public String getNombre() {
         return nombre;
     }

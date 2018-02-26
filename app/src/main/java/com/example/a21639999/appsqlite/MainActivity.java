@@ -20,6 +20,9 @@ public class MainActivity extends AppCompatActivity {
     private ArrayList<Contacto> listaContactos;
     private AdaptadorContacto ac;
     private LinearLayoutManager llm;
+    static final int COD_DATOS_CONTACTO = 1;
+    static final int BORRADO = 10;
+    static final int MODIFICADO = 20;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -31,12 +34,16 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void consultarContacto (View v){
-       listaContactos = cds.leerContactos();
-       if (listaContactos.size() == 0){
-           Toast.makeText(this, "No se han encontrado contactos", Toast.LENGTH_LONG).show();
-       }else{
-           cargarRV();
-       }
+        cargarLista();
+    }
+
+    private void cargarLista() {
+        listaContactos = cds.leerContactos();
+        if (listaContactos.size() == 0){
+            Toast.makeText(this, "No se han encontrado contactos", Toast.LENGTH_LONG).show();
+        }else{
+            cargarRV();
+        }
     }
 
     private void cargarRV(){
@@ -46,7 +53,52 @@ public class MainActivity extends AppCompatActivity {
         rv.setLayoutManager(llm);
 
         ac =  new AdaptadorContacto(listaContactos);
+
+        ac.setOnclickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Contacto c = listaContactos.get(rv.getChildAdapterPosition(v));
+
+                Intent i = new Intent(MainActivity.this, ContactoActivity.class);
+
+                i.putExtra(getResources().getString(R.string.ID), c.getId());
+
+                startActivityForResult(i, COD_DATOS_CONTACTO);
+            }
+        });
         rv.setAdapter(ac);
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (requestCode == COD_DATOS_CONTACTO){
+            int res = data.getIntExtra("RESULTADO", 0);
+            String nomContacto = data.getStringExtra("CONTACTO");
+            String mensaje = "";
+            if (resultCode == RESULT_OK){
+                if (res == BORRADO){
+                    mensaje = "el borrado del contacto " + nomContacto + " se ha realizado con éxito.";
+
+                }else {
+                    mensaje = "La modificación del contacto " + nomContacto + " se ha realizado con éxito.";
+                }
+            }else{
+                if (res == BORRADO){
+                    mensaje = "el borrado del contacto " + nomContacto + " no se ha realizado con éxito.";
+
+                }else {
+                    mensaje = "La modificación del contacto " + nomContacto + " no se ha realizado con éxito.";
+                }
+            }
+            Toast.makeText(this, mensaje, Toast.LENGTH_LONG).show();
+        }
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        cargarLista();
     }
 
     public void insertarContacto (View v){

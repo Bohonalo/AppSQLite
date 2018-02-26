@@ -55,7 +55,7 @@ public class ContactosDatasource {
         return idContacto;
     }
 
-    public void actualizarContacto(Contacto contacto) {
+    public int actualizarContacto(Contacto contacto) {
         SQLiteDatabase database = openWriteable();
         database.beginTransaction();
 
@@ -64,7 +64,7 @@ public class ContactosDatasource {
         cv.put(ContactosDBContract.ContactoEntry.COLUMN_MAIL, contacto.getEmail());
 
         String Where = ContactosDBContract.ContactoEntry.COLUMN_ID + "=" + contacto.getId();
-        database.update(ContactosDBContract.ContactoEntry.TABLE_NAME, cv, Where, null);
+        int row = database.update(ContactosDBContract.ContactoEntry.TABLE_NAME, cv, Where, null);
 //
 //        String Where2 = ContactosDBContract.ContactoEntry.COLUMN_ID + "= ?";
 //        String [] args = {String.valueOf(contacto.getId())};
@@ -77,15 +77,17 @@ public class ContactosDatasource {
         database.setTransactionSuccessful();
         database.endTransaction();
         close(database);
+
+        return row;
     }
 
-    public void borrarContacto(long idContacto) {
+    public int borrarContacto(long idContacto) {
 
         SQLiteDatabase database = openWriteable();
         database.beginTransaction();
 
         String [] args = {String.valueOf(idContacto)};
-        database.delete(ContactosDBContract.ContactoEntry.TABLE_NAME,
+        int cod = database.delete(ContactosDBContract.ContactoEntry.TABLE_NAME,
                 ContactosDBContract.ContactoEntry.COLUMN_ID + "=?", args);
 
 //        database.delete(ContactosDBContract.ContactoEntry.TABLE_NAME,
@@ -95,6 +97,7 @@ public class ContactosDatasource {
         database.endTransaction();
         close(database);
 
+        return cod;
     }
 
     public Contacto leerContacto(long idContacto) {
@@ -103,7 +106,7 @@ public class ContactosDatasource {
         String sentencia = "SELECT " + ContactosDBContract.ContactoEntry.COLUMN_ID + ", " +
                 ContactosDBContract.ContactoEntry.COLUMN_NAME + ", " +
                 ContactosDBContract.ContactoEntry.COLUMN_MAIL +
-                "FROM contactos WHERE " +
+                " FROM contactos WHERE " +
                 ContactosDBContract.ContactoEntry.COLUMN_ID + " = " +
                 idContacto;
 

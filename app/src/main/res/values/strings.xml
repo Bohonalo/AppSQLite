@@ -1,3 +1,4 @@
 <resources>
     <string name="app_name">AppSQLite</string>
+    <string name="ID">ID</string>
 </resources>
